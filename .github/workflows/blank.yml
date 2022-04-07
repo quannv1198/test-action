@@ -3,15 +3,24 @@ on: [push]
 jobs:
   setup:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ 14.x ]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     outputs:
       test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
       test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
       - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       - run: yarn
       - id: set-test-chunks
         name: Set Chunks
-        run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 2 | ceil)]')"
+        run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 10 | ceil)]')"
       - id: set-test-chunk-ids
         name: Set Chunk IDs
         run: echo "::set-output name=test-chunk-ids::$(echo $CHUNKS | jq -cM 'to_entries | map(.key)')"
@@ -24,9 +33,15 @@ jobs:
       - setup
     strategy:
       matrix:
+        node-version: [14.x]
         chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
     steps:
       - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
       - run: yarn
       - name: jest
         run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs npx jest -- --maxConcurrency=2 --maxWorkers=2
