@@ -1,0 +1,26 @@
+{
+  "name": "test-action",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/quannv1198/test-action.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/quannv1198/test-action/issues"
+  },
+  "homepage": "https://github.com/quannv1198/test-action#readme",
+  "dependencies": {
+    "puppeteer": "^13.5.2"
+  },
+  "devDependencies": {
+    "jest": "^27.5.1"
+  }
+}
