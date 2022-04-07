@@ -8,7 +8,7 @@ jobs:
       test-chunk-ids: ${{ steps['set-test-chunk-ids'].outputs['test-chunk-ids'] }}
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
+      - run: yarn
       - id: set-test-chunks
         name: Set Chunks
         run: echo "::set-output name=test-chunks::$(npx jest --listTests --json | jq -cM '[_nwise(length / 2 | ceil)]')"
@@ -27,7 +27,7 @@ jobs:
         chunk: ${{ fromJson(needs.setup.outputs['test-chunk-ids']) }}
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
+      - run: yarn
       - name: jest
         run: echo $CHUNKS | jq '.[${{ matrix.chunk }}] | .[] | @text' | xargs npx jest -- --maxConcurrency=2 --maxWorkers=2
         env:
